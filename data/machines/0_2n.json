@@ -1,0 +1,50 @@
+{
+    "name": "0_power_of_2",
+    "alphabet": ["0", ".", "x", "y"],
+    "blank": ".",
+    "states": ["init", "mark", "check", "reset", "found_y", "double", "cleanup", "accept", "reject", "HALT"],
+    "initial": "init",
+    "finals": ["HALT"],
+    "transitions": {
+      "init": [
+        { "read": "0", "to_state": "mark", "write": "x", "action": "RIGHT" },
+        { "read": ".", "to_state": "reject", "write": ".", "action": "RIGHT" }
+      ],
+      "mark": [
+        { "read": "0", "to_state": "check", "write": "y", "action": "RIGHT" },
+        { "read": ".", "to_state": "accept", "write": ".", "action": "LEFT" }
+      ],
+      "check": [
+        { "read": "0", "to_state": "check", "write": "0", "action": "RIGHT" },
+        { "read": ".", "to_state": "reset", "write": ".", "action": "LEFT" }
+      ],
+      "reset": [
+        { "read": "0", "to_state": "reset", "write": "0", "action": "LEFT" },
+        { "read": "y", "to_state": "found_y", "write": "y", "action": "LEFT" }
+      ],
+      "found_y": [
+        { "read": "0", "to_state": "found_y", "write": "0", "action": "LEFT" },
+        { "read": "x", "to_state": "double", "write": "x", "action": "RIGHT" }
+      ],
+      "double": [
+        { "read": "0", "to_state": "double", "write": "0", "action": "RIGHT" },
+        { "read": "y", "to_state": "mark", "write": "y", "action": "RIGHT" }
+      ],
+      "cleanup": [
+        { "read": "x", "to_state": "cleanup", "write": "0", "action": "RIGHT" },
+        { "read": "y", "to_state": "cleanup", "write": "0", "action": "RIGHT" },
+        { "read": ".", "to_state": "HALT", "write": "y", "action": "RIGHT" }
+      ],
+      "accept": [
+        { "read": "x", "to_state": "accept", "write": "0", "action": "LEFT" },
+        { "read": "y", "to_state": "accept", "write": "0", "action": "LEFT" },
+        { "read": ".", "to_state": "cleanup", "write": ".", "action": "RIGHT" }
+      ],
+      "reject": [
+        { "read": "0", "to_state": "reject", "write": ".", "action": "RIGHT" },
+        { "read": "x", "to_state": "reject", "write": ".", "action": "RIGHT" },
+        { "read": "y", "to_state": "reject", "write": ".", "action": "RIGHT" },
+        { "read": ".", "to_state": "HALT", "write": "n", "action": "RIGHT" }
+      ]
+    }
+  }

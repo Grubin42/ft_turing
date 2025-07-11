@@ -1,0 +1,5 @@
+(executable
+ (name main)
+ (public_name ft_turing)
+ (modules main machine parser tape simulator)
+ (libraries yojson))

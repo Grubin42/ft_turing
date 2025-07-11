@@ -1,0 +1,16 @@
+opam-version: "2.0"
+name: "ft_turing"
+version: "~dev"
+synopsis: "Machine de Turing"
+description: "Implémentation d'une machine de Turing à une bande infinie"
+maintainer: ["Goons"]
+authors: ["Goons"]
+depends: [
+  "ocaml" {>= "4.08.0"}
+  "dune" {>= "2.7.0"}
+  "yojson" {>= "1.7.0"}
+]
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" name "-j" jobs]
+]
