@@ -178,28 +178,30 @@ La métamachine universelle a été **implémentée avec succès** ! Elle peut s
 - ✅ `B|1|H|1|R` - cleanup: 1 → HALT, 1, RIGHT
 - ✅ `B|.|B|.|L` - cleanup: . → cleanup, ., LEFT
 
-### Génération et test
+### Utilisation de la métamachine pseudo_universal
 
 ```bash
-# 1. Générer la métamachine fonctionnelle
-ocaml src/metamachine_generator.ml > data/machines/metamachine.json
+# 1. Encoder une entrée pour l'addition
+ocaml src/encode_pseudo_addition.ml "1+1="
+# Produit: C&C{[1C>1][+S>.][.H>.]}S{[1P<+][.H<.]}P{[.C>1]}*1+11
 
-# 2. Encoder une entrée pour la machine d'addition
-ocaml src/encode_add_machine.ml "1+1="
-# Produit: #[A|1|A|1|R];[A|+|A|.|R];[A|=|B|.|L];[A|.|A|.|R];[B|1|H|1|R];[B|.|B|.|L];#<1>+1=#A#
+# 2. Exécuter la métamachine avec l'entrée encodée
+ENCODED=$(ocaml src/encode_pseudo_addition.ml "1+1=")
+dune exec ft_turing -- data/machines/05_pseudo_universal.json "$ENCODED"
 
-# 3. Exécuter la métamachine avec l'entrée encodée
-ENCODED=$(ocaml src/encode_add_machine.ml "1+1=")
-dune exec ft_turing -- data/machines/metamachine.json "$ENCODED"
+# 3. Script de test automatique
+./test_pseudo_universal.sh
 
 # 4. Tests spécifiques
-dune exec ft_turing -- data/machines/metamachine.json "#[A|1|A|1|R];[A|+|A|.|R];[A|=|B|.|L];#<1>+1=#A#"
-dune exec ft_turing -- data/machines/metamachine.json "#[A|1|A|1|R];[A|+|A|.|R];[A|=|B|.|L];#<=>.11#A#"
+dune exec ft_turing -- data/machines/05_pseudo_universal.json "C&C{[1C>1][+S>.][.H>.]}S{[1P<+][.H<.]}P{[.C>1]}*1+11"
+dune exec ft_turing -- data/machines/05_pseudo_universal.json "C&C{[1C>1][+S>.][.H>.]}S{[1P<+][.H<.]}P{[.C>1]}*11+111"
 ```
 
 ### 📊 Performances et validation
 
-- **Addition complète `1+1=`** : 119 étapes dans la métamachine vs 5 étapes dans la machine normale
+- **Addition `1+1`** : 940 étapes dans la métamachine pseudo_universal
+- **Addition `11+1`** : 1053 étapes dans la métamachine pseudo_universal  
+- **Addition `111+11`** : 1489 étapes dans la métamachine pseudo_universal
 - **Règle A|1|A|1|R** : Transforme `<1>` → `11<>` (déplacement RIGHT)
 - **Règle A|+|A|.|R** : Transforme `<+>` → `.<>` (écriture . et déplacement RIGHT)  
 - **Règle A|=|B|.|L** : Transforme `<=>` → `.<>` et change l'état A→B (déplacement LEFT)
