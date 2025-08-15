@@ -182,20 +182,21 @@ La métamachine dédiée a été **implémentée avec succès** ! Elle simule pa
 ### Utilisation de la métamachine dédiée
 
 ```bash
-# 1. Encoder la machine unary_add + entrée
-ocaml src/encode_unary_add_universal.ml "1+1="
+# 1. Encoder automatiquement la machine unary_add + entrée
+ocaml src/encode_unary_add_universal.ml data/machines/unary_add.json "1+1="
 # Produit: C&C{[1C>1][+S>.][.H>.]}S{[1P<+][.H<.]}P{[.C>1]}*1+1=
 
-# 2. Exécuter la métamachine dédiée
-ENCODED=$(ocaml src/encode_unary_add_universal.ml "1+1=")
+# 2. Exécuter la métamachine dédiée (encodage automatique)
+ENCODED=$(ocaml src/encode_unary_add_universal.ml data/machines/unary_add.json "1+1=")
 dune exec ft_turing -- data/machines/unary_add_dedicated.json "$ENCODED"
 
 # 3. Script de comparaison des performances
 ./test_dedicated_vs_universal.sh
 
-# 4. Tests spécifiques
-dune exec ft_turing -- data/machines/unary_add_dedicated.json "C&C{[1C>1][+S>.][.H>.]}S{[1P<+][.H<.]}P{[.C>1]}*1+1="
-dune exec ft_turing -- data/machines/unary_add_dedicated.json "C&C{[1C>1][+S>.][.H>.]}S{[1P<+][.H<.]}P{[.C>1]}*11+1="
+# 4. Tests avec encodage générique
+ocaml src/encode_unary_add_universal.ml "1+1=" | xargs dune exec ft_turing -- data/machines/unary_add_dedicated.json
+ocaml src/encode_unary_add_universal.ml "11+1=" | xargs dune exec ft_turing -- data/machines/unary_add_dedicated.json
+ocaml src/encode_unary_add_universal.ml "111+11=" | xargs dune exec ft_turing -- data/machines/unary_add_dedicated.json
 ```
 
 ### 📊 Performances et validation
@@ -224,6 +225,7 @@ Elle démontre qu'une machine de Turing peut simuler une autre machine de Turing
 - ✅ **Performance acceptable** : 53-56 étapes vs >940 de la machine complète  
 - ✅ **Simplicité** : 6 états vs >7000
 - ✅ **Spécialisée** : Optimisée pour l'addition unaire
+- ✅ **Encodeur générique** : Génère automatiquement l'encodage correct
 - ✅ **Testée et validée** : Fonctionne sur tous les cas testés
 
 ### Mapping des états
