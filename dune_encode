@@ -1,0 +1,3 @@
+(executable
+ (name encode_add_machine))
+
